@@ -2,14 +2,17 @@ package ltotj.minecraft.donjara.game;
 
 import ltotj.minecraft.donjara.InventoryGUI;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
+import org.bukkit.profile.PlayerTextures;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-
-import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Base64;
 import java.util.UUID;
 
 public class ResultGUI {
@@ -73,20 +76,30 @@ public class ResultGUI {
         return item;
     }
 
+    /**
+     * Base64文字列からプレイヤーヘッドを作成（Paper 1.21+ PlayerProfile API使用）
+     */
     private ItemStack createSkullFromBase64(String base64) {
-        ItemStack skull = new ItemStack(org.bukkit.Material.PLAYER_HEAD, 1);
-        if (base64 == null || base64.isEmpty()) return skull;
-        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), "");
-        profile.getProperties().put("textures", new Property("textures", base64));
+        ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) skull.getItemMeta();
+        
         try {
-            Field profileField = skullMeta.getClass().getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(skullMeta, profile);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+            // Base64をデコードしてURLを取得
+            String decoded = new String(Base64.getDecoder().decode(base64));
+            String urlString = decoded.split("\"url\":\"")[1].split("\"")[0];
+            
+            // PlayerProfileを作成してテクスチャを設定
+            PlayerProfile profile = Bukkit.createPlayerProfile(UUID.randomUUID());
+            PlayerTextures textures = profile.getTextures();
+            textures.setSkin(new URL(urlString));
+            profile.setTextures(textures);
+            
+            meta.setOwnerProfile(profile);
+            skull.setItemMeta(meta);
+        } catch (MalformedURLException | ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
-        skull.setItemMeta(skullMeta);
+        
         return skull;
     }
 
