@@ -63,7 +63,7 @@ public class InventoryGUI {
     }
 
     public void removeItem(int slot){
-        inv.setItem(slot,new ItemStack(Material.STONE,0));
+        inv.setItem(slot, null);
     }
 
     private List<Component> listToComponent(String... lore){
