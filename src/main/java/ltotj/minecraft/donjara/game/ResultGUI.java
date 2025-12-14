@@ -1,10 +1,16 @@
 package ltotj.minecraft.donjara.game;
 
-import dev.dbassett.skullcreator.SkullCreator;
 import ltotj.minecraft.donjara.InventoryGUI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+
+import java.lang.reflect.Field;
+import java.util.UUID;
 
 public class ResultGUI {
 
@@ -60,11 +66,28 @@ public class ResultGUI {
                 str="eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGQ3OTEwZTEwMzM0Zjg5MGE2MjU0ODNhYzBjODI0YjVlNGExYTRiMTVhOTU2MzI3YTNlM2FlNDU4ZDllYTQifX19";
                 break;
         }
-        ItemStack item=SkullCreator.itemFromBase64(str);
+        ItemStack item=createSkullFromBase64(str);
         ItemMeta meta=item.getItemMeta();
         meta.displayName(Component.text("§4点数"));
         item.setItemMeta(meta);
         return item;
+    }
+
+    private ItemStack createSkullFromBase64(String base64) {
+        ItemStack skull = new ItemStack(org.bukkit.Material.PLAYER_HEAD, 1);
+        if (base64 == null || base64.isEmpty()) return skull;
+        SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        profile.getProperties().put("textures", new Property("textures", base64));
+        try {
+            Field profileField = skullMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(skullMeta, profile);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        skull.setItemMeta(skullMeta);
+        return skull;
     }
 
 }
