@@ -77,7 +77,7 @@ public class ResultGUI {
         ItemStack skull = new ItemStack(org.bukkit.Material.PLAYER_HEAD, 1);
         if (base64 == null || base64.isEmpty()) return skull;
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        GameProfile profile = new GameProfile(UUID.randomUUID(), "");
         profile.getProperties().put("textures", new Property("textures", base64));
         try {
             Field profileField = skullMeta.getClass().getDeclaredField("profile");
