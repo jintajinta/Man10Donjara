@@ -90,6 +90,7 @@ public class InventoryGUI {
         // Add visual glow using a harmless enchantment and hide it
         org.bukkit.enchantments.Enchantment glow = org.bukkit.enchantments.Enchantment.LURE;
         if(glow!=null) item.addUnsafeEnchantment(glow,1);
+        item.setItemMeta(meta);  // Apply metadata changes to the item
         inv.setItem(slot,item);
     }
 
