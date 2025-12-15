@@ -133,7 +133,5 @@ public class EventList implements Listener {
             player.openInventory(GlobalClass.gameRuleGUI.ruleGUI.inv);
         }
     }
-
-    }
 }
 
