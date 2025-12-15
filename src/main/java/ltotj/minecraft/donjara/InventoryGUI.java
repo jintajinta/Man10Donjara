@@ -5,9 +5,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.NamespacedKey;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -79,18 +76,7 @@ public class InventoryGUI {
     public void enchantItem(int slot){
         ItemStack item=inv.getItem(slot);
         if(item==null)return;
-        // Mark item with PersistentDataContainer flag and optionally make it glow
-        ItemMeta meta = item.getItemMeta();
-        if(meta==null) return;
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("Donjara");
-        if(plugin!=null){
-            NamespacedKey key = new NamespacedKey(plugin, "li_zhi");
-            meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte)1);
-        }
-        // Add visual glow using a harmless enchantment and hide it
-        org.bukkit.enchantments.Enchantment glow = org.bukkit.enchantments.Enchantment.LURE;
-        if(glow!=null) item.addUnsafeEnchantment(glow,1);
-        item.setItemMeta(meta);  // Apply metadata changes to the item
+        item.addUnsafeEnchantment(Enchantment.FORTUNE,1);
         inv.setItem(slot,item);
     }
 

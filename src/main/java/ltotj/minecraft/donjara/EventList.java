@@ -3,8 +3,6 @@ package ltotj.minecraft.donjara;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.NamespacedKey;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,10 +15,8 @@ import org.bukkit.plugin.Plugin;
 
 public class EventList implements Listener {
 
-    private final Plugin plugin;
 
     public EventList(Plugin plugin) {
-        this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
@@ -47,7 +43,7 @@ public class EventList implements Listener {
                 } else if (matchName(clickedItem, "§l§4戻る")) {
                     player.openInventory(playerData.playerGUI.inv.inv);
                 } else if (playerData.preLi_zhi&&!playerData.li_zhi) {
-                    if (hasLiZhiFlag(clickedItem)) {
+                    if (clickedItem.containsEnchantment(Enchantment.FORTUNE)) {
                         playerData.li_zhi = true;
                         playerData.discardedTileNum = slot % 44;
                         playerData.playerGUI.setTiles(donjara.playerList.get(donjara.turnSeat).playerHand.hand);
@@ -138,10 +134,6 @@ public class EventList implements Listener {
         }
     }
 
-    private boolean hasLiZhiFlag(ItemStack item){
-        if(item==null || item.getItemMeta()==null) return false;
-        NamespacedKey key = new NamespacedKey(plugin, "li_zhi");
-        return item.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.BYTE);
     }
 }
 
